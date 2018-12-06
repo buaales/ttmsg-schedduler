@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.doubanio.com/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+autopep8 = "*"
+
+[packages]
+z3-solver = "*"
+networkx = "*"
+pandas = "*"
+matplotlib = "*"
+
+[requires]
+python_version = "3.7"
