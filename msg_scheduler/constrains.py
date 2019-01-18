@@ -57,8 +57,9 @@ class Z3Hook(ModelHook):
                 continue
             for my_c in range(0, self._lcm // frame.peroid):
                 for other_c in range(0, self._lcm // other_frame.peroid):
-                    self._solver.add(other_c * frame.peroid + self.get_var(frame, frame_seq_in_peroid, link) !=
-                                     my_c * other_frame.peroid + self.get_var(other_frame, frame_seq_in_peroid, link))
+                    self._solver.add(my_c * frame.peroid + self.get_var(frame, frame_seq_in_peroid, link) !=
+                                     other_c * other_frame.peroid + self.get_var(other_frame, frame_seq_in_peroid,
+                                                                                 link))
 
     def on_switch(self, app: Application, switch: SwitchNode, frame: Frame, frame_seq_in_peroid: int, before_link: Link,
                   after_link):
@@ -88,6 +89,9 @@ class Z3Hook(ModelHook):
         super().on_received(app, receiver, frame, frame_seq_in_peroid, first_link, last_link)
         self._solver.add(self.get_var(frame, frame_seq_in_peroid, last_link) -
                          self.get_var(frame, frame_seq_in_peroid, first_link) <= app.peroid)
+        if frame_seq_in_peroid != 0:
+            self._solver.add(self.get_var(frame, frame_seq_in_peroid, last_link) -
+                             self.get_var(frame, frame_seq_in_peroid - 1, last_link) == app.peroid)
 
     @functools.lru_cache(maxsize=1)
     def solve(self):

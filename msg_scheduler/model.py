@@ -149,6 +149,8 @@ class Network:
     def __init__(self):
         self._node_name_map: typing.Dict[str, Node] = dict()
         self._nodes: typing.Set[Node] = set()
+        self._end_nodes: typing.Set[EndNode] = set()
+        self._msg_nodes: typing.Set[SwitchNode] = set()
         self._link_name_map: typing.Dict[typing.Tuple[str, str], Link] = dict(
         )
         self._links: typing.Set[Link] = set()
@@ -156,6 +158,14 @@ class Network:
             set)  # 每个节点的邻居节点
 
         self._graph = networkx.DiGraph()
+
+    @property
+    def end_nodes(self):
+        return self._end_nodes
+
+    @property
+    def msg_nodes(self):
+        return self._msg_nodes
 
     def add_neighbor(self, node_me: Node, node_neighbor: Node):
         if node_me not in self._nodes:
@@ -167,6 +177,10 @@ class Network:
     def add_node(self, node: Node) -> 'Network':
         self._nodes.add(node)
         self._node_name_map[node.name] = node
+        if isinstance(node, EndNode):
+            self._end_nodes.add(node)
+        elif isinstance(node, SwitchNode):
+            self._msg_nodes.add(node)
         return self
 
     def add_link(self, node1_name: str, node2_name: str) -> 'Network':
@@ -324,6 +338,10 @@ class Application(NamedObj):
     @property
     def peroid(self) -> int:
         return self._peroid
+
+    @property
+    def node(self) -> Node:
+        return self._host_node
 
     @property
     def deps(self) -> typing.Set['Application']:
@@ -486,3 +504,5 @@ class Scheduler:
             app = self._app_name_map[app_name]
             if app.check():
                 self._solve_vlink(app.vlink, hook)
+
+

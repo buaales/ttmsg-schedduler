@@ -12,6 +12,7 @@ z3-solver = "*"
 networkx = "*"
 pandas = "*"
 matplotlib = "*"
+ffmpeg = "*"
 
 [requires]
 python_version = "3.7"
